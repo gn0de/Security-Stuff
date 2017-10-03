@@ -1,0 +1,18 @@
+inline void CpuGetProcessorNameAndSpeed( void )
+{
+    CPUID_REGISTERS cr = { 0 };
+    __cpuid( reinterpret_cast< int * >( &cr ), 0x80000000 );
+
+    if( cr.eax & 0x80000000 ) {
+        if( cr.eax >= 0x80000004 ) {
+            __cpuid( reinterpret_cast< int * >( &cr ), 0x80000002 );
+            RtlCopyMoveMemory( CpuProcessorNameAndSpeed, &cr.eax, sizeof( int ) * 4 );
+
+            __cpuid( reinterpret_cast< int * >( &cr ), 0x80000003 );
+            RtlCopyMoveMemory( reinterpret_cast< unsigned int * >( CpuProcessorNameAndSpeed + 16 ), &cr.eax, sizeof( int ) * 4 );
+
+            __cpuid( reinterpret_cast< int * >( &cr ), 0x80000004 );
+            RtlCopyMoveMemory( reinterpret_cast< unsigned int * >( CpuProcessorNameAndSpeed + 31 ), &cr.eax, sizeof( int ) * 4 );
+        }
+    }
+}
