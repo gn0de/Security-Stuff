@@ -1,0 +1,43 @@
+HANDLE hOlly = FindWindow(TEXT("OLLYDBG"), NULL);
+	HANDLE hWinDbg = FindWindow(TEXT("WinDbgFrameClass"), NULL);
+	HANDLE hScylla1 = FindWindow(NULL, TEXT("Scylla x86 v0.9.7c"));
+	HANDLE hScylla2 = FindWindow(NULL, TEXT("Scylla x64 v0.9.7c"));
+	HANDLE x32_dbg = FindWindow(NULL, TEXT("x32_dbg"));
+	HANDLE x64_dbg = FindWindow(NULL, TEXT("x64_dbg"));
+	HANDLE IDA = FindWindow(NULL, TEXT("IDA v6.8.150423"));
+	HANDLE DepW = FindWindow(NULL, TEXT("Dependency Walker"));
+	HANDLE W32Dasm = FindWindow(NULL, TEXT("URSoft W32Dasm Program Disassembler/Debugger (Demo Version 8.7)"));
+	HANDLE ImDebug = FindWindow(NULL, TEXT("Immunity Debugger"));
+	HANDLE hOllyC = FindWindow(NULL, TEXT("OllyDbg - [CPU]"));
+	HANDLE hOllyCS = FindWindow(NULL, TEXT("OllyDbg - csgo.exe - [CPU - main thread, module ntdll]"));
+	HANDLE hReko = FindWindow(NULL, TEXT("Reko Decompiler"));
+	HANDLE hRelyze = FindWindow(NULL, TEXT("Relyze Plugin Editor"));
+	HANDLE hCheatEngine = FindWindow(NULL, TEXT("Cheat Engine 6.6"));
+	HANDLE hHookShark = FindWindow(NULL, TEXT("HookShark64 BETA 0.1 | Running on [VER 10.0 () x86 | 2 Cores (+2 HT-Cores) ]"));
+	HANDLE hFiddler = FindWindow(NULL, TEXT("Progress Telerik Fiddler Web Debugger"));
+	HANDLE hIDA = FindResource(NULL, TEXT("Hex-Rays SA"), TEXT("The Interactive Disassembler"), TEXT("idaq64"), TEXT("idaq64.exe"));
+	
+	if (IsDbgPresentPrefixCheck()
+		|| Int2DCheck()
+		|| hOlly
+		|| hWinDbg
+		|| hScylla1
+		|| hScylla2
+		|| x32_dbg
+		|| x64_dbg
+		|| IDA
+		|| DepW
+		|| W32Dasm
+		|| ImDebug
+		|| hOllyC
+		|| hOllyCS
+		|| hReko
+		|| hRelyze
+		|| hCheatEngine
+		|| hHookShark
+		|| hFiddler
+		|| hIDA)
+	{
+		ExitProcess(NULL);
+		Bluescreen();
+	}
