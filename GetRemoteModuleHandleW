@@ -1,0 +1,236 @@
+static HMODULE GetRemoteModuleHandleW( HANDLE hProcess, bool is64bit, LPCWCH Module, ULONG* ModuleSize = 0)
+{
+	#ifdef _WIN64
+	PVOID dwModuleHandle = NULL;
+
+	if (!is64bit)
+	{
+		ULONG_PTR PebBaseAddress = 0;
+		NTSTATUS status = STATUS_SUCCESS;
+		status = ntdll::NtQueryInformationProcess( hProcess, ProcessWow64Information, &PebBaseAddress, sizeof( ULONG_PTR ), 0 );
+		if (!NT_SUCCESS( status ))
+			return NULL;
+
+		_PEB32 peb;
+		_PEB_LDR_DATA232 peb_ldr;
+
+		SIZE_T dwBytesRead = 0;
+		if (ReadProcessMemory( hProcess, (LPCVOID)PebBaseAddress, &peb, sizeof( peb ), &dwBytesRead ))
+		{
+			if (ReadProcessMemory( hProcess, (LPCVOID)peb.Ldr, &peb_ldr, sizeof( peb_ldr ), &dwBytesRead ))
+			{
+				_LIST_ENTRY32* pLdrListHead = (_LIST_ENTRY32*)peb_ldr.InLoadOrderModuleList.Flink;
+				_LIST_ENTRY32* pLdrCurrentNode = (_LIST_ENTRY32*)peb_ldr.InLoadOrderModuleList.Flink;
+				do
+				{
+					_LDR_DATA_TABLE_ENTRY_BASE32 lstEntry = { 0 };
+					if (!ReadProcessMemory( hProcess, (void*)pLdrCurrentNode, &lstEntry, sizeof( _LDR_DATA_TABLE_ENTRY_BASE32 ), &dwBytesRead ))
+					{
+						//DbgShout( "[GetRemoteModuleHandleW] Could not read list entry from LDR list. Error = %s", Utils::GetLastErrorAsString( ).c_str( ) );
+						return NULL;
+					}
+
+					pLdrCurrentNode = (_LIST_ENTRY32*)lstEntry.InLoadOrderLinks.Flink;
+
+					wchar_t wcsBaseDllName[MAX_PATH] = { 0 };
+					if (lstEntry.BaseDllName.Length > 0)
+					{
+						if (!ReadProcessMemory( hProcess, (LPCVOID)lstEntry.BaseDllName.Buffer, &wcsBaseDllName, lstEntry.BaseDllName.Length, &dwBytesRead ))
+						{
+							//DbgShout( "[GetRemoteModuleHandleW] Could not read list entry DLL name. Error = %s", Utils::GetLastErrorAsString( ).c_str( ) );
+							return NULL;
+						}
+					}
+
+					if (lstEntry.DllBase != NULL && lstEntry.SizeOfImage != 0)
+					{
+						if (_wcsicmp( wcsBaseDllName, Module ) == 0)
+						{
+							dwModuleHandle = (PVOID)lstEntry.DllBase;
+							if (ModuleSize)
+								*ModuleSize = lstEntry.SizeOfImage;
+							break;
+						}
+					}
+
+				} while (pLdrListHead != pLdrCurrentNode);
+
+			} // Get Ldr
+		} // Read PEB 
+
+		return (HMODULE)dwModuleHandle;
+	}
+	else
+	{
+		PPROCESS_BASIC_INFORMATION pbi = NULL;
+		PEB peb;
+		PEB_LDR_DATA peb_ldr;
+
+		// Try to allocate buffer 
+		DWORD dwSize = sizeof( PROCESS_BASIC_INFORMATION );
+		pbi = (PPROCESS_BASIC_INFORMATION)malloc( dwSize );
+		if (!pbi)
+			return NULL;
+
+		ZeroMemory( pbi, dwSize );
+
+		ULONG dwSizeNeeded = 0;
+		NTSTATUS status = ntdll::NtQueryInformationProcess( hProcess, ProcessBasicInformation, pbi, dwSize, &dwSizeNeeded );
+		if (status >= 0 && dwSize < dwSizeNeeded)
+		{
+			if (pbi)
+				free( pbi );
+			pbi = (PPROCESS_BASIC_INFORMATION)malloc( dwSizeNeeded );
+			if (!pbi)
+				return NULL;
+
+			status = ntdll::NtQueryInformationProcess( hProcess, ProcessBasicInformation, pbi, dwSizeNeeded, &dwSizeNeeded );
+		}
+
+		// Did we successfully get basic info on process
+		if (NT_SUCCESS( status ))
+		{
+			// Read Process Environment Block (PEB)
+			if (pbi->PebBaseAddress)
+			{
+				SIZE_T dwBytesRead = 0;
+				if (ReadProcessMemory( hProcess, pbi->PebBaseAddress, &peb, sizeof( peb ), &dwBytesRead ))
+				{
+					dwBytesRead = 0;
+					if (ReadProcessMemory( hProcess, peb.Ldr, &peb_ldr, sizeof( peb_ldr ), &dwBytesRead ))
+					{
+						LIST_ENTRY *pLdrListHead = (LIST_ENTRY *)peb_ldr.InLoadOrderModuleList.Flink;
+						LIST_ENTRY *pLdrCurrentNode = peb_ldr.InLoadOrderModuleList.Flink;
+						do
+						{
+							LDR_DATA_TABLE_ENTRY lstEntry = { 0 };
+							dwBytesRead = 0;
+							if (!ReadProcessMemory( hProcess, (void*)pLdrCurrentNode, &lstEntry, sizeof( LDR_DATA_TABLE_ENTRY ), &dwBytesRead ))
+							{
+								//DbgShout( "[GetRemoteModuleHandleW] Could not read list entry from LDR list. Error = %s", Utils::GetLastErrorAsString( ).c_str( ) );
+								goto exit;
+							}
+
+							pLdrCurrentNode = lstEntry.InLoadOrderLinks.Flink;
+
+							wchar_t wcsBaseDllName[MAX_PATH] = { 0 };
+							if (lstEntry.BaseDllName.Length > 0)
+							{
+								dwBytesRead = 0;
+								if (!ReadProcessMemory( hProcess, (LPCVOID)lstEntry.BaseDllName.Buffer, &wcsBaseDllName, lstEntry.BaseDllName.Length, &dwBytesRead ))
+								{
+									//DbgShout( "[GetRemoteModuleHandleW] Could not read list entry DLL name. Error = %s", Utils::GetLastErrorAsString( ).c_str( ) );
+									goto exit;
+								}
+							}
+
+							if (lstEntry.DllBase != nullptr && lstEntry.SizeOfImage != 0)
+							{
+								if (_wcsicmp( wcsBaseDllName, Module ) == 0)
+								{
+									dwModuleHandle = lstEntry.DllBase;
+									if (ModuleSize)
+										*ModuleSize = lstEntry.SizeOfImage;
+									break;
+								}
+							}
+
+						} while (pLdrListHead != pLdrCurrentNode);
+
+					} // Get Ldr
+				} // Read PEB 
+			} // Check for PEB
+		}
+
+	exit:
+		if (pbi)
+			free( pbi );
+		return (HMODULE)dwModuleHandle;
+	}
+	#else
+	PPROCESS_BASIC_INFORMATION pbi = NULL;
+	PEB peb;
+	PEB_LDR_DATA peb_ldr;
+
+	// Try to allocate buffer 
+	DWORD dwSize = sizeof( PROCESS_BASIC_INFORMATION );
+	pbi = (PPROCESS_BASIC_INFORMATION)malloc( dwSize );
+	if (!pbi)
+		return NULL;
+
+	ZeroMemory( pbi, dwSize );
+
+	ULONG dwSizeNeeded = 0;
+	NTSTATUS status = ntdll::NtQueryInformationProcess( hProcess, ProcessBasicInformation, pbi, dwSize, &dwSizeNeeded );
+	if (status >= 0 && dwSize < dwSizeNeeded)
+	{
+		if (pbi)
+			free( pbi );
+		pbi = (PPROCESS_BASIC_INFORMATION)malloc( dwSizeNeeded );
+		if (!pbi)
+			return NULL;
+
+		status = ntdll::NtQueryInformationProcess( hProcess, ProcessBasicInformation, pbi, dwSizeNeeded, &dwSizeNeeded );
+	}
+
+	// Did we successfully get basic info on process
+	if (NT_SUCCESS( status ))
+	{
+		// Read Process Environment Block (PEB)
+		if (pbi->PebBaseAddress)
+		{
+			SIZE_T dwBytesRead = 0;
+			if (ReadProcessMemory( hProcess, pbi->PebBaseAddress, &peb, sizeof( peb ), &dwBytesRead ))
+			{
+				dwBytesRead = 0;
+				if (ReadProcessMemory( hProcess, peb.Ldr, &peb_ldr, sizeof( peb_ldr ), &dwBytesRead ))
+				{
+					LIST_ENTRY *pLdrListHead = (LIST_ENTRY *)peb_ldr.InLoadOrderModuleList.Flink;
+					LIST_ENTRY *pLdrCurrentNode = peb_ldr.InLoadOrderModuleList.Flink;
+					do
+					{
+						LDR_DATA_TABLE_ENTRY lstEntry = { 0 };
+						dwBytesRead = 0;
+						if (!ReadProcessMemory( hProcess, (void*)pLdrCurrentNode, &lstEntry, sizeof( LDR_DATA_TABLE_ENTRY ), &dwBytesRead ))
+						{
+							//DbgShout( "[GetRemoteModuleHandleW] Could not read list entry from LDR list. Error = %s", Utils::GetLastErrorAsString( ).c_str( ) );
+							goto exit;
+						}
+
+						pLdrCurrentNode = lstEntry.InLoadOrderLinks.Flink;
+
+						wchar_t wcsBaseDllName[MAX_PATH] = { 0 };
+						if (lstEntry.BaseDllName.Length > 0)
+						{
+							dwBytesRead = 0;
+							if (!ReadProcessMemory( hProcess, (LPCVOID)lstEntry.BaseDllName.Buffer, &wcsBaseDllName, lstEntry.BaseDllName.Length, &dwBytesRead ))
+							{
+								//DbgShout( "[GetRemoteModuleHandleW] Could not read list entry DLL name. Error = %s", Utils::GetLastErrorAsString( ).c_str( ) );
+								goto exit;
+							}
+						}
+
+						if (lstEntry.DllBase != nullptr && lstEntry.SizeOfImage != 0)
+						{
+							if (_wcsicmp( wcsBaseDllName, Module ) == 0)
+							{
+								dwModuleHandle = lstEntry.DllBase;
+								if (ModuleSize)
+									*ModuleSize = lstEntry.SizeOfImage;
+								break;
+							}
+						}
+
+					} while (pLdrListHead != pLdrCurrentNode);
+
+				} // Get Ldr
+			} // Read PEB 
+		} // Check for PEB
+	}
+
+exit:
+	if (pbi)
+		free( pbi );
+	return (HMODULE)dwModuleHandle;
+	#endif
+}
